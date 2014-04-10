@@ -23,10 +23,20 @@ namespace TestConsole
 				badges.Add(new Badge(){ FirstName = "Madelyn", LastName = "Baines", CongregationName = "Aberaeron", DepartmentName = "Volunteers" });
 			}
 			
-			var builder = new BadgePdfBuilder(badges);
-			var fileName = builder.CreatePdf();
-			
-			var process = Process.Start(fileName);
+			try
+			{
+				var builder = new BadgePdfBuilder(badges);
+				var fileName = builder.CreatePdf();
+				var process = Process.Start(fileName);
+			}
+			catch(Exception ex)
+			{
+				Console.WriteLine("ERROR");
+				Console.WriteLine("");
+				Console.WriteLine(ex.Message);
+				Console.WriteLine("");
+				Console.WriteLine(ex.StackTrace);
+			}
 			
 			Console.Write("Press any key to continue . . . ");
 			Console.ReadKey(true);
