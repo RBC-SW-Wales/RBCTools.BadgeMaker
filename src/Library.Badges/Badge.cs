@@ -11,6 +11,14 @@ namespace RbcTools.Library.Badges
 		
 		public string LastName { get; set; }
 		
+		public string FullName
+		{
+			get
+			{
+				return FirstName + " " + LastName;
+			}
+		}
+		
 		public string CongregationName { get; set; }
 		
 		public string DepartmentName { get; set; }
