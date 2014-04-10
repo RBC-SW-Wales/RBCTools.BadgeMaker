@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
 using MigraDoc.Rendering;
+using PdfSharp;
+using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 
 namespace RbcTools.Library.Badges
@@ -20,23 +22,23 @@ namespace RbcTools.Library.Badges
 		
 		#region Fields
 		
-		private Document document;
 		private List<Badge> allBadges;
-		private Section pageSection;
-		private Table pageTable;
+		private List<XRect> allRects = new List<XRect>();
+		
+		private PdfDocument pdfDocument;
+		private PdfPage page;
+		private XGraphics graphics;
 		
 		private int badgeCount = 0;
+		private float badgeWidth = Unit.FromInch(3.3);
+		private float badgeHeight = Unit.FromInch(2.1);
 		
 		#endregion
 		
 		public string CreatePdf()
 		{
-			// Create document, basic layout.
-			document = new Document();
-			document.DefaultPageSetup.TopMargin = Unit.FromInch(0.5);
-			document.DefaultPageSetup.BottomMargin = Unit.FromInch(0.5);
-			
-			CreatePage();
+			this.pdfDocument = new PdfDocument();
+			this.pdfDocument.Info.Title = "RBC Badges";
 			
 			foreach(var badge in allBadges)
 				this.CreateBadge(badge);
@@ -46,106 +48,55 @@ namespace RbcTools.Library.Badges
 		
 		private void CreateBadge(Badge badge)
 		{
-			// Create padge part of the pdf
-			Cell pageCell = pageTable.Rows[0].Cells[0];
+			if(badgeCount == 0)
+				this.CreatePage();
 			
-			switch(badgeCount)
-			{
-				case 0:
-					pageCell = pageTable.Rows[0].Cells[0];
-					break;
-				case 1:
-					pageCell = pageTable.Rows[0].Cells[1];
-					break;
-				case 2:
-					pageCell = pageTable.Rows[1].Cells[0];
-					break;
-				case 3:
-					pageCell = pageTable.Rows[1].Cells[1];
-					break;
-				case 4:
-					pageCell = pageTable.Rows[2].Cells[0];
-					break;
-				case 5:
-					pageCell = pageTable.Rows[2].Cells[1];
-					break;
-				case 6:
-					pageCell = pageTable.Rows[3].Cells[0];
-					break;
-				case 7:
-					pageCell = pageTable.Rows[3].Cells[1];
-					break;
-				case 8:
-					pageCell = pageTable.Rows[4].Cells[0];
-					break;
-				case 9:
-					pageCell = pageTable.Rows[4].Cells[1];
-					break;
-			}
+			//Get matching rect for this badge.
+			XRect rectBadge = this.allRects[this.allBadges.IndexOf(badge)];
 			
-			var badgeTable = new Table();
-			badgeTable.AddColumn().Width = 40;
-			badgeTable.AddRow().Height = Unit.FromInch(2);
-			pageCell.Elements.Add(badgeTable);
+			this.graphics.DrawString(badge.FullName, new XFont("Verdana", 7, XFontStyle.Regular), XBrushes.Black, rectBadge, XStringFormats.Center);
 			
-			
-			var para = badgeTable.Rows[0].Cells[0].AddParagraph();
-			para.AddText("JEHOVAH'S WITNESSES REGIONAL BUILDING TEAM");
-			
-			para = badgeTable.Rows[0].Cells[0].AddParagraph();
-			para.AddText(badge.FirstName);
-			
-			para = badgeTable.Rows[0].Cells[0].AddParagraph();
-			para.AddText(badge.LastName);
-			
-			para = badgeTable.Rows[0].Cells[0].AddParagraph();
-			para.AddText(badge.CongregationName);
-			
-			para = badgeTable.Rows[0].Cells[0].AddParagraph();
-			para.AddText(badge.DepartmentName);
-			
-			// Count badge index (out of 10) and reset if onto next lot of 10.
 			badgeCount++;
-			if(badgeCount == 10)
-			{
-				badgeCount = 0;
-				CreatePage();
-			}
+			if(badgeCount == 10) badgeCount = 0;
 		}
 		
 		private void CreatePage()
 		{
-			pageSection = document.AddSection();
+			this.page = this.pdfDocument.AddPage();
+			this.page.Size = PageSize.A4;
+			this.graphics = XGraphics.FromPdfPage(this.page);
 			
-			pageTable = pageSection.AddTable();
+			var outerHeight = (XUnit)(badgeHeight * 5);
+			var outerWidth  = (XUnit)(badgeWidth * 2);
 			
-			pageTable.TopPadding =
-				pageTable.RightPadding =
-				pageTable.BottomPadding =
-				pageTable.LeftPadding = 0;
+			var topMargin = (XUnit)((this.page.Height - outerHeight) / 2);
+			var leftMargin = (XUnit)((this.page.Width - outerWidth) / 2);
 			
-			pageTable.Borders.Width = 1;
+			// var outerRect = new XRect(leftMargin, topMargin, outerWidth, outerHeight);
+			//  this.graphics.DrawRectangle(new XPen(XColors.Aqua), outerRect);
 			
-			pageTable.AddColumn();
-			pageTable.AddColumn();
+			var startx = leftMargin;
+			var starty = topMargin;
 			
-			pageTable.AddRow();
-			pageTable.AddRow();
-			pageTable.AddRow();
-			pageTable.AddRow();
-			pageTable.AddRow();
+			for (int rectIndex = 0; rectIndex < 5; rectIndex++)
+			{
+				var rectLeft = new XRect(startx, starty, badgeWidth, badgeHeight);
+				this.graphics.DrawRectangle(new XPen(XColors.LightGray), rectLeft);
+				
+				var rectRight = new XRect(startx + badgeWidth, starty, badgeWidth, badgeHeight);
+				this.graphics.DrawRectangle(new XPen(XColors.LightGray), rectRight);
+				
+				this.allRects.Add(rectLeft);
+				this.allRects.Add(rectRight);
+				
+				starty = starty + badgeHeight;
+			}
 		}
 		
 		private string CreateFileOnSystem()
 		{
-			PdfDocumentRenderer pdfRenderer = new PdfDocumentRenderer(false, PdfFontEmbedding.Always);
-			pdfRenderer.Document = document;
-			pdfRenderer.RenderDocument();
-			
-			var pdfDocument = pdfRenderer.PdfDocument;
 			var fileName = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\RBCTool\LatestBadges.pdf";
-			pdfDocument.Save(fileName);
-			
+			this.pdfDocument.Save(fileName);
 			return fileName;
 		}
 	}
