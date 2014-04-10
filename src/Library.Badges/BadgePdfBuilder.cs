@@ -33,6 +33,9 @@ namespace RbcTools.Library.Badges
 		private float badgeWidth = Unit.FromInch(3.3);
 		private float badgeHeight = Unit.FromInch(2.1);
 		
+		private XFont fontSmall = new XFont("Verdana", 5, XFontStyle.Regular);
+		private XFont fontNormal = new XFont("Verdana", 7, XFontStyle.Regular);
+		
 		#endregion
 		
 		public string CreatePdf()
@@ -54,7 +57,11 @@ namespace RbcTools.Library.Badges
 			//Get matching rect for this badge.
 			XRect rectBadge = this.allRects[this.allBadges.IndexOf(badge)];
 			
-			this.graphics.DrawString(badge.FullName, new XFont("Verdana", 7, XFontStyle.Regular), XBrushes.Black, rectBadge, XStringFormats.Center);
+			var topRect = new XRect(rectBadge.X, rectBadge.Y, rectBadge.Width, XUnit.FromCentimeter(0.5));
+			this.graphics.DrawRectangle(XBrushes.DarkBlue, topRect);
+			
+			this.graphics.DrawString("Jehovah's Witnesses Regional Building Team".ToUpper(), this.fontSmall, XBrushes.White, topRect, XStringFormats.Center);
+			this.graphics.DrawString(badge.FullName, this.fontNormal, XBrushes.Black, rectBadge, XStringFormats.Center);
 			
 			badgeCount++;
 			if(badgeCount == 10) badgeCount = 0;
@@ -73,7 +80,7 @@ namespace RbcTools.Library.Badges
 			var leftMargin = (XUnit)((this.page.Width - outerWidth) / 2);
 			
 			// var outerRect = new XRect(leftMargin, topMargin, outerWidth, outerHeight);
-			//  this.graphics.DrawRectangle(new XPen(XColors.Aqua), outerRect);
+			// this.graphics.DrawRectangle(new XPen(XColors.Aqua), outerRect);
 			
 			var startx = leftMargin;
 			var starty = topMargin;
