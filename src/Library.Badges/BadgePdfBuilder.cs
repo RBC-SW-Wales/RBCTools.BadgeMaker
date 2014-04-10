@@ -35,6 +35,22 @@ namespace RbcTools.Library.Badges
 		
 		private XFont fontSmall = new XFont("Verdana", 5, XFontStyle.Regular);
 		private XFont fontNormal = new XFont("Verdana", 7, XFontStyle.Regular);
+		private XFont fontBold = new XFont("Verdana", 7, XFontStyle.Bold);
+		
+		#endregion
+		
+		#region Properties
+		
+		private XStringFormat CenterLeft
+		{
+			get
+			{
+				XStringFormat centerLeft = new XStringFormat();
+				centerLeft.LineAlignment = XLineAlignment.Center;
+				centerLeft.Alignment = XStringAlignment.Near;
+				return centerLeft;
+			}
+		}
 		
 		#endregion
 		
@@ -57,11 +73,41 @@ namespace RbcTools.Library.Badges
 			//Get matching rect for this badge.
 			XRect rectBadge = this.allRects[this.allBadges.IndexOf(badge)];
 			
-			var topRect = new XRect(rectBadge.X, rectBadge.Y, rectBadge.Width, XUnit.FromCentimeter(0.5));
-			this.graphics.DrawRectangle(XBrushes.DarkBlue, topRect);
+			var lineHeight = XUnit.FromCentimeter(0.5);
 			
+			// Top rect
+			var topRect = new XRect(rectBadge.X, rectBadge.Y, rectBadge.Width, lineHeight);
+			this.graphics.DrawRectangle(XBrushes.DarkBlue, topRect);
 			this.graphics.DrawString("Jehovah's Witnesses Regional Building Team".ToUpper(), this.fontSmall, XBrushes.White, topRect, XStringFormats.Center);
-			this.graphics.DrawString(badge.FullName, this.fontNormal, XBrushes.Black, rectBadge, XStringFormats.Center);
+			
+			var padding = Unit.FromCentimeter(0.25);
+			
+			var contentRect = new XRect(rectBadge.X + padding, topRect.Bottom, rectBadge.Width - (padding * 2), rectBadge.Height - topRect.Height - padding);
+			// this.graphics.DrawRectangle(XBrushes.LightBlue, contentRect);
+			
+			var gridWidth = contentRect.Width / 8;
+			var column1Width = gridWidth * 1;
+			var column2Width = gridWidth * 4;
+			var column3Width = gridWidth * 3;
+			
+			// Name, Congregation and Department labels
+			var nameLabel = new XRect(contentRect.X, contentRect.Y, column1Width, lineHeight);
+			this.graphics.DrawString("Name", this.fontSmall, XBrushes.Black, nameLabel, this.CenterLeft);
+			
+			var congLabelRect = new XRect(contentRect.X, nameLabel.Bottom, column1Width, lineHeight);
+			this.graphics.DrawString("Cong.", this.fontSmall, XBrushes.Black, congLabelRect, this.CenterLeft);
+			
+			var deptLabelRect = new XRect(contentRect.X, congLabelRect.Bottom, column1Width, lineHeight);
+			this.graphics.DrawString("Dept.", this.fontSmall, XBrushes.Black, deptLabelRect, this.CenterLeft);
+			
+			var nameRect = new XRect(nameLabel.Right, contentRect.Y, column2Width, lineHeight);
+			this.graphics.DrawString(badge.FullName, this.fontBold, XBrushes.Black, nameRect, this.CenterLeft);
+			
+			var congRect = new XRect(congLabelRect.Right, nameRect.Bottom, column2Width, lineHeight);
+			this.graphics.DrawString(badge.CongregationName, this.fontNormal, XBrushes.Black, congRect, this.CenterLeft);
+			
+			var deptRect = new XRect(deptLabelRect.Right, congRect.Bottom, column2Width, lineHeight);
+			this.graphics.DrawString(badge.DepartmentName, this.fontNormal, XBrushes.Black, deptRect, this.CenterLeft);
 			
 			badgeCount++;
 			if(badgeCount == 10) badgeCount = 0;
