@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+//using System.Drawing;
+//using System.IO;
+//using System.Reflection;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
 using MigraDoc.Rendering;
@@ -109,6 +112,12 @@ namespace RbcTools.Library.Badges
 			var deptRect = new XRect(deptLabelRect.Right, congRect.Bottom, column2Width, lineHeight);
 			this.graphics.DrawString(badge.DepartmentName, this.fontNormal, XBrushes.Black, deptRect, this.CenterLeft);
 			
+			// Logo
+			var imageRect = new XRect(nameRect.Right, contentRect.Y, column3Width, lineHeight * 3);
+			this.graphics.DrawRectangle(XBrushes.Gray, imageRect);
+			// TODO Replace with RBC logo
+			//this.graphics.DrawImage(GetImageFromResource("badge-logo"), imageRect);
+			
 			badgeCount++;
 			if(badgeCount == 10) badgeCount = 0;
 		}
@@ -145,6 +154,18 @@ namespace RbcTools.Library.Badges
 				starty = starty + badgeHeight;
 			}
 		}
+		
+//		private static XImage GetImageFromResource(string imageName)
+//		{
+//			Bitmap bitmap = null;
+//			Assembly assem = Assembly.GetExecutingAssembly();
+//			var resourceName = "RbcTools.Library.Badges.Resources." + imageName + ".jpg";
+//			using(Stream stream = assem.GetManifestResourceStream(resourceName))
+//			{
+//				bitmap = new Bitmap(stream);
+//			}
+//			return XImage.FromGdiPlusImage(bitmap);
+//		}
 		
 		private string CreateFileOnSystem()
 		{
