@@ -36,10 +36,10 @@ namespace TestConsole
 				Console.WriteLine(ex.Message);
 				Console.WriteLine("");
 				Console.WriteLine(ex.StackTrace);
+				Console.WriteLine("");
+				Console.Write("Press any key to close . . . ");
+				Console.ReadKey(true);
 			}
-			
-			Console.Write("Press any key to continue . . . ");
-			Console.ReadKey(true);
 		}
 	}
 }
