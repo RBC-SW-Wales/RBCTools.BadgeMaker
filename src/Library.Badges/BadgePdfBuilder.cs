@@ -36,9 +36,7 @@ namespace RbcTools.Library.Badges
 		private float badgeWidth = Unit.FromInch(3.3);
 		private float badgeHeight = Unit.FromInch(2.1);
 		
-		private XFont fontSmall = new XFont("Verdana", 5, XFontStyle.Regular);
 		private XFont fontNormal = new XFont("Verdana", 7, XFontStyle.Regular);
-		private XFont fontBold = new XFont("Verdana", 7, XFontStyle.Bold);
 		
 		#endregion
 		
@@ -63,95 +61,129 @@ namespace RbcTools.Library.Badges
 			this.pdfDocument.Info.Title = "RBC Badges";
 			
 			foreach(var badge in allBadges)
+			{
+				if(badgeCount == 0)
+					this.CreatePage();
+				
 				this.CreateBadge(badge);
+				
+				badgeCount++;
+				if(badgeCount == 10) badgeCount = 0;
+			}
 			
 			return CreateFileOnSystem();
 		}
 		
 		private void CreateBadge(Badge badge)
 		{
-			if(badgeCount == 0)
-				this.CreatePage();
-			
-			//Get matching rect for this badge.
+			// Get matching rectangle for this badge.
 			XRect rectBadge = this.allRects[this.allBadges.IndexOf(badge)];
+			this.graphics.DrawRectangle(XPens.LightGray, rectBadge);
 			
-			var lineHeight = XUnit.FromCentimeter(0.5);
+			// Split badge area into 8 even rows and 13 even columns.
+			var rowHeight = rectBadge.Height / 8;
+			var columnWidth = rectBadge.Width / 13;
 			
-			// Top rect
-			var topRect = new XRect(rectBadge.X, rectBadge.Y, rectBadge.Width, lineHeight);
-			this.graphics.DrawRectangle(XBrushes.DarkBlue, topRect);
-			this.graphics.DrawString("Jehovah's Witnesses Regional Building Team".ToUpper(), this.fontSmall, XBrushes.White, topRect, XStringFormats.Center);
+			// Top row (full width)
+			var topRow = new XRect(rectBadge.X, rectBadge.Y, rectBadge.Width, rowHeight);
+			this.graphics.DrawRectangle(XBrushes.DarkBlue, topRow);
+			this.graphics.DrawString("Jehovah's Witnesses Regional Building Team".ToUpper(), this.fontNormal, XBrushes.White, topRow, XStringFormats.Center);
 			
-			var padding = Unit.FromCentimeter(0.25);
-			
-			var contentRect = new XRect(rectBadge.X + padding, topRect.Bottom, rectBadge.Width - (padding * 2), rectBadge.Height - topRect.Height - padding);
-			// this.graphics.DrawRectangle(XBrushes.LightBlue, contentRect);
-			
-			var gridWidth = contentRect.Width / 8;
-			var column1Width = gridWidth * 1;
-			var column2Width = gridWidth * 4;
-			var column3Width = gridWidth * 3;
+			// Define a 'content' rectangle that has half a column either side (leaving 12 columns to use).
+			var contentRect = new XRect(rectBadge.X + (columnWidth / 2), topRow.Bottom, rectBadge.Width - columnWidth, rectBadge.Height - topRow.Height);
 			
 			// Name, Congregation and Department labels
-			var nameLabel = new XRect(contentRect.X, contentRect.Y, column1Width, lineHeight);
-			this.graphics.DrawString("Name", this.fontSmall, XBrushes.Black, nameLabel, this.CenterLeft);
+			var labelWidth = columnWidth * 2;
+			var valueWidth = columnWidth * 5;
+			var valueXPoint = contentRect.X + labelWidth;
 			
-			var congLabelRect = new XRect(contentRect.X, nameLabel.Bottom, column1Width, lineHeight);
-			this.graphics.DrawString("Cong.", this.fontSmall, XBrushes.Black, congLabelRect, this.CenterLeft);
+			var nameLabel = new XRect(contentRect.X, contentRect.Y, labelWidth, rowHeight);
+			this.graphics.DrawString("Name", this.fontNormal, XBrushes.Black, nameLabel, this.CenterLeft);
+			var name = new XRect(valueXPoint, contentRect.Y, valueWidth, rowHeight);
+			this.graphics.DrawString(badge.FullName, this.fontNormal, XBrushes.Black, name, this.CenterLeft);
+			this.graphics.DrawLine(XPens.Gray, nameLabel.BottomLeft, name.BottomRight);
 			
-			var deptLabelRect = new XRect(contentRect.X, congLabelRect.Bottom, column1Width, lineHeight);
-			this.graphics.DrawString("Dept.", this.fontSmall, XBrushes.Black, deptLabelRect, this.CenterLeft);
+			var congLabel = new XRect(contentRect.X, nameLabel.Bottom, labelWidth, rowHeight);
+			this.graphics.DrawString("Cong.", this.fontNormal, XBrushes.Black, congLabel, this.CenterLeft);
+			var cong = new XRect(valueXPoint, name.Bottom, valueWidth, rowHeight);
+			this.graphics.DrawString(badge.CongregationName, this.fontNormal, XBrushes.Black, cong, this.CenterLeft);
+			this.graphics.DrawLine(XPens.Gray, congLabel.BottomLeft, cong.BottomRight);
 			
-			var nameRect = new XRect(nameLabel.Right, contentRect.Y, column2Width, lineHeight);
-			this.graphics.DrawString(badge.FullName, this.fontBold, XBrushes.Black, nameRect, this.CenterLeft);
-			
-			var congRect = new XRect(congLabelRect.Right, nameRect.Bottom, column2Width, lineHeight);
-			this.graphics.DrawString(badge.CongregationName, this.fontNormal, XBrushes.Black, congRect, this.CenterLeft);
-			
-			var deptRect = new XRect(deptLabelRect.Right, congRect.Bottom, column2Width, lineHeight);
-			this.graphics.DrawString(badge.DepartmentName, this.fontNormal, XBrushes.Black, deptRect, this.CenterLeft);
+			var deptLabel = new XRect(contentRect.X, congLabel.Bottom, labelWidth, rowHeight);
+			this.graphics.DrawString("Dept.", this.fontNormal, XBrushes.Black, deptLabel, this.CenterLeft);
+			var dept = new XRect(valueXPoint, cong.Bottom, valueWidth, rowHeight);
+			this.graphics.DrawString(badge.DepartmentName, this.fontNormal, XBrushes.Black, dept, this.CenterLeft);
+			this.graphics.DrawLine(XPens.Gray, deptLabel.BottomLeft, dept.BottomRight);
 			
 			// Logo
-			var imageRect = new XRect(nameRect.Right, contentRect.Y, column3Width, lineHeight * 3);
+			var logoXPoint = valueXPoint + valueWidth + columnWidth;
+			var imageRect = new XRect(logoXPoint, contentRect.Y, columnWidth * 4, rowHeight * 3);
 			this.graphics.DrawRectangle(XBrushes.Gray, imageRect);
 			// TODO Replace with RBC logo
 			//this.graphics.DrawImage(GetImageFromResource("badge-logo"), imageRect);
 			
-			badgeCount++;
-			if(badgeCount == 10) badgeCount = 0;
+			// Training
+			var training1 = new XRect(contentRect.X, deptLabel.Bottom, columnWidth * 4, rowHeight);
+			this.graphics.DrawString("Training 1", this.fontNormal, XBrushes.Black, training1, this.CenterLeft);
+			
+			var training2 = new XRect(contentRect.X, training1.Bottom, columnWidth * 4, rowHeight);
+			this.graphics.DrawString("Training 2", this.fontNormal, XBrushes.Black, training2, this.CenterLeft);
+			
+			var training3 = new XRect(contentRect.X, training2.Bottom, columnWidth * 4, rowHeight);
+			this.graphics.DrawString("Training 3", this.fontNormal, XBrushes.Black, training3, this.CenterLeft);
+			
+			var training4 = new XRect(contentRect.X, training3.Bottom, columnWidth * 4, rowHeight);
+			this.graphics.DrawString("Training 4", this.fontNormal, XBrushes.Black, training4, this.CenterLeft);
+			
+			var trainingCol2X = contentRect.X + training1.Width;
+			
+			var training5 = new XRect(trainingCol2X, training1.Top, columnWidth * 4, rowHeight);
+			this.graphics.DrawString("Training 5", this.fontNormal, XBrushes.Black, training5, this.CenterLeft);
+			
+			var training6 = new XRect(trainingCol2X, training2.Top, columnWidth * 4, rowHeight);
+			this.graphics.DrawString("Training 6", this.fontNormal, XBrushes.Black, training6, this.CenterLeft);
+			
+			var training7 = new XRect(trainingCol2X, training3.Top, columnWidth * 4, rowHeight);
+			this.graphics.DrawString("Training 7", this.fontNormal, XBrushes.Black, training7, this.CenterLeft);
+			
+			var training8 = new XRect(trainingCol2X, training4.Top, columnWidth * 4, rowHeight);
+			this.graphics.DrawString("Training 8", this.fontNormal, XBrushes.Black, training8, this.CenterLeft);
+			
+			var trainingCol3X = trainingCol2X + training5.Width;
+			
+			var access1 = new XRect(trainingCol3X, training1.Top, columnWidth * 4, rowHeight);
+			this.graphics.DrawString("Access", this.fontNormal, XBrushes.Black, access1, this.CenterLeft);
+			
+			var access2 = new XRect(trainingCol3X, training2.Top, columnWidth * 4, rowHeight);
+			this.graphics.DrawString("Roof/Scaffold", this.fontNormal, XBrushes.Black, access2, this.CenterLeft);
+			
+			var access3 = new XRect(trainingCol3X, training3.Top, columnWidth * 4, rowHeight);
+			this.graphics.DrawString("Site", this.fontNormal, XBrushes.Black, access3, this.CenterLeft);
 		}
 		
 		private void CreatePage()
 		{
+			// Create new page object and get graphics object for drawing on to.
+			
 			this.page = this.pdfDocument.AddPage();
 			this.page.Size = PageSize.A4;
 			this.graphics = XGraphics.FromPdfPage(this.page);
 			
-			var outerHeight = (XUnit)(badgeHeight * 5);
-			var outerWidth  = (XUnit)(badgeWidth * 2);
+			// Create all the badge rectangles to draw into later
 			
-			var topMargin = (XUnit)((this.page.Height - outerHeight) / 2);
-			var leftMargin = (XUnit)((this.page.Width - outerWidth) / 2);
+			var badgesAreaHeight = (XUnit)(this.badgeHeight * 5);
+			var badgesAreaWidth  = (XUnit)(this.badgeWidth * 2);
 			
-			// var outerRect = new XRect(leftMargin, topMargin, outerWidth, outerHeight);
-			// this.graphics.DrawRectangle(new XPen(XColors.Aqua), outerRect);
-			
-			var startx = leftMargin;
-			var starty = topMargin;
+			var distanceFromTop = (XUnit)((this.page.Height - badgesAreaHeight) / 2);
+			var distanceFromLeft = (XUnit)((this.page.Width - badgesAreaWidth) / 2);
 			
 			for (int rectIndex = 0; rectIndex < 5; rectIndex++)
 			{
-				var rectLeft = new XRect(startx, starty, badgeWidth, badgeHeight);
-				this.graphics.DrawRectangle(new XPen(XColors.LightGray), rectLeft);
-				
-				var rectRight = new XRect(startx + badgeWidth, starty, badgeWidth, badgeHeight);
-				this.graphics.DrawRectangle(new XPen(XColors.LightGray), rectRight);
-				
-				this.allRects.Add(rectLeft);
-				this.allRects.Add(rectRight);
-				
-				starty = starty + badgeHeight;
+				var badgeRectLeft = new XRect(distanceFromLeft, distanceFromTop, badgeWidth, badgeHeight);
+				var badgeRectRight = new XRect(distanceFromLeft + this.badgeWidth, distanceFromTop, badgeWidth, badgeHeight);
+				this.allRects.Add(badgeRectLeft);
+				this.allRects.Add(badgeRectRight);
+				distanceFromTop = distanceFromTop + badgeHeight;
 			}
 		}
 		
