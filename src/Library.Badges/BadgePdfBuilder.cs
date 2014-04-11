@@ -19,6 +19,19 @@ namespace RbcTools.Library.Badges
 		public BadgePdfBuilder(List<Badge> badges)
 		{
 			this.allBadges = badges;
+			
+			this.allRects = new List<XRect>();
+			
+			this.badgeCount = 0;
+			
+			this.badgeWidth = Unit.FromInch(3.3);
+			this.badgeHeight = Unit.FromInch(2.1);
+			
+			// Each badge area is split into 8 even rows and 13 even columns.
+			this.rowHeight = this.badgeHeight / 8;
+			this.columnWidth = this.badgeWidth / 13;
+			
+			this.fontNormal = new XFont("Verdana", 7, XFontStyle.Regular);
 		}
 		
 		#endregion
@@ -26,17 +39,20 @@ namespace RbcTools.Library.Badges
 		#region Fields
 		
 		private List<Badge> allBadges;
-		private List<XRect> allRects = new List<XRect>();
+		private List<XRect> allRects;
 		
 		private PdfDocument pdfDocument;
 		private PdfPage page;
 		private XGraphics graphics;
 		
-		private int badgeCount = 0;
-		private float badgeWidth = Unit.FromInch(3.3);
-		private float badgeHeight = Unit.FromInch(2.1);
+		private int badgeCount;
+		private float badgeWidth;
+		private float badgeHeight;
 		
-		private XFont fontNormal = new XFont("Verdana", 7, XFontStyle.Regular);
+		private float rowHeight;
+		private float columnWidth;
+		
+		private XFont fontNormal;
 		
 		#endregion
 		
@@ -80,10 +96,6 @@ namespace RbcTools.Library.Badges
 			XRect rectBadge = this.allRects[this.allBadges.IndexOf(badge)];
 			this.graphics.DrawRectangle(XPens.LightGray, rectBadge);
 			
-			// Split badge area into 8 even rows and 13 even columns.
-			var rowHeight = rectBadge.Height / 8;
-			var columnWidth = rectBadge.Width / 13;
-			
 			// Top row (full width)
 			var topRow = new XRect(rectBadge.X, rectBadge.Y, rectBadge.Width, rowHeight);
 			this.graphics.DrawRectangle(XBrushes.DarkBlue, topRow);
@@ -123,42 +135,30 @@ namespace RbcTools.Library.Badges
 			//this.graphics.DrawImage(GetImageFromResource("badge-logo"), imageRect);
 			
 			// Training
-			var training1 = new XRect(contentRect.X, deptLabel.Bottom, columnWidth * 4, rowHeight);
-			this.graphics.DrawString("Training 1", this.fontNormal, XBrushes.Black, training1, this.CenterLeft);
+			var y = dept.Bottom;
+			var col2X = contentRect.X + (columnWidth * 4);
+			var col3X = contentRect.X + (columnWidth * 8);
 			
-			var training2 = new XRect(contentRect.X, training1.Bottom, columnWidth * 4, rowHeight);
-			this.graphics.DrawString("Training 2", this.fontNormal, XBrushes.Black, training2, this.CenterLeft);
+			this.DrawCheckItem(contentRect.X, y, true, "Training 1");
+			this.DrawCheckItem(col2X, y, false, "Training 2");
 			
-			var training3 = new XRect(contentRect.X, training2.Bottom, columnWidth * 4, rowHeight);
-			this.graphics.DrawString("Training 3", this.fontNormal, XBrushes.Black, training3, this.CenterLeft);
+			var access = new XRect(col3X, y, columnWidth * 4, rowHeight);
+			this.DrawString("ACCESS", access, this.fontNormal);
 			
-			var training4 = new XRect(contentRect.X, training3.Bottom, columnWidth * 4, rowHeight);
-			this.graphics.DrawString("Training 4", this.fontNormal, XBrushes.Black, training4, this.CenterLeft);
+			y += this.rowHeight;
+			this.DrawCheckItem(contentRect.X, y, false, "Training 3");
+			this.DrawCheckItem(col2X, y, true, "Training 4");
+			this.DrawCheckItem(col3X, y, false, "Roof/Scaffold");
 			
-			var trainingCol2X = contentRect.X + training1.Width;
+			y += this.rowHeight;
+			this.DrawCheckItem(contentRect.X, y, true, "Training 4");
+			this.DrawCheckItem(col2X, y, false, "Training 5");
+			this.DrawCheckItem(col3X, y, true, "Site");
 			
-			var training5 = new XRect(trainingCol2X, training1.Top, columnWidth * 4, rowHeight);
-			this.graphics.DrawString("Training 5", this.fontNormal, XBrushes.Black, training5, this.CenterLeft);
+			y += this.rowHeight;
+			this.DrawCheckItem(contentRect.X, y, false, "Training 7");
+			this.DrawCheckItem(col2X, y, true, "Training 8");
 			
-			var training6 = new XRect(trainingCol2X, training2.Top, columnWidth * 4, rowHeight);
-			this.graphics.DrawString("Training 6", this.fontNormal, XBrushes.Black, training6, this.CenterLeft);
-			
-			var training7 = new XRect(trainingCol2X, training3.Top, columnWidth * 4, rowHeight);
-			this.graphics.DrawString("Training 7", this.fontNormal, XBrushes.Black, training7, this.CenterLeft);
-			
-			var training8 = new XRect(trainingCol2X, training4.Top, columnWidth * 4, rowHeight);
-			this.graphics.DrawString("Training 8", this.fontNormal, XBrushes.Black, training8, this.CenterLeft);
-			
-			var trainingCol3X = trainingCol2X + training5.Width;
-			
-			var access1 = new XRect(trainingCol3X, training1.Top, columnWidth * 4, rowHeight);
-			this.graphics.DrawString("Access", this.fontNormal, XBrushes.Black, access1, this.CenterLeft);
-			
-			var access2 = new XRect(trainingCol3X, training2.Top, columnWidth * 4, rowHeight);
-			this.graphics.DrawString("Roof/Scaffold", this.fontNormal, XBrushes.Black, access2, this.CenterLeft);
-			
-			var access3 = new XRect(trainingCol3X, training3.Top, columnWidth * 4, rowHeight);
-			this.graphics.DrawString("Site", this.fontNormal, XBrushes.Black, access3, this.CenterLeft);
 		}
 		
 		private void CreatePage()
@@ -186,6 +186,32 @@ namespace RbcTools.Library.Badges
 				distanceFromTop = distanceFromTop + badgeHeight;
 			}
 		}
+		
+		#region Drawing Methods
+		
+		private void DrawCheckItem(double x, double y, bool isChecked, string text)
+		{
+			var checkBoxWidth = this.columnWidth / 2;
+			var textXPoint = x + checkBoxWidth;
+			
+			var checkRect = new XRect(x, y, checkBoxWidth, rowHeight);
+			var textRect = new XRect(textXPoint, y, columnWidth * 3.5, rowHeight);
+			
+			var fontWingdings = new XFont("Wingdings 2", 9, XFontStyle.Bold);
+			
+			this.DrawString(isChecked ? "R" : "£", checkRect, fontWingdings);
+			this.DrawString(text, textRect);
+		}
+		
+		private void DrawString(string text, XRect rect, XFont font = null)
+		{
+			if(font == null)
+				font = this.fontNormal;
+			
+			this.graphics.DrawString(text, font, XBrushes.Black, rect, this.CenterLeft);
+		}
+		
+		#endregion
 		
 //		private static XImage GetImageFromResource(string imageName)
 //		{
