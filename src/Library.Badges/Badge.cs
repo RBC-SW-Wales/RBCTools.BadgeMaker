@@ -22,5 +22,26 @@ namespace RbcTools.Library.Badges
 		public string CongregationName { get; set; }
 		
 		public string DepartmentName { get; set; }
+		
+		public bool HasDrillsTraining { get; set; }
+		
+		public bool HasPlanersTraing { get; set; }
+		
+		public bool HasRoutersTraining { get; set; }
+		
+		public bool HasCitbPlantTraining { get; set; }
+		
+		public bool HasJigsawsTraining { get; set; }
+		
+		public bool HasNailersTraining { get; set; }
+		
+		public bool HasChopSawsTraining { get; set; }
+		
+		public bool HasCircularSawsTraining { get; set; }
+		
+		public bool HasRoofAndScaffoldAccess { get; set; }
+		
+		public bool HasSiteAccess { get; set; }
+		
 	}
 }
