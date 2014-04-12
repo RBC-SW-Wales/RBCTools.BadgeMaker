@@ -16,11 +16,38 @@ namespace TestConsole
 			
 			for (int i = 0; i < 4; i++)
 			{
-				badges.Add(new Badge(){ FirstName = "John", LastName = "Doe", CongregationName = "Cardigan", DepartmentName = "Decorating" });
-				badges.Add(new Badge(){ FirstName = "Joe", LastName = "Bloggs", CongregationName = "Aberaeron", DepartmentName = "Air Handling" });
-				badges.Add(new Badge(){ FirstName = "Jane", LastName = "Doe", CongregationName = "Cardigan", DepartmentName = "Electricians" });
-				badges.Add(new Badge(){ FirstName = "Phil", LastName = "Baines", CongregationName = "Aberaeron", DepartmentName = "IT Department" });
-				badges.Add(new Badge(){ FirstName = "Madelyn", LastName = "Baines", CongregationName = "Aberaeron", DepartmentName = "Volunteers" });
+				var john = new Badge(){ FirstName = "John", LastName = "Doe", CongregationName = "Cardigan", DepartmentName = "Decorating" };
+				john.HasSiteAccess = true;
+				john.HasDrillsTraining = true;
+				john.HasJigsawsTraining = true;
+				badges.Add(john);
+				
+				var joe = new Badge(){ FirstName = "Joe", LastName = "Bloggs", CongregationName = "Aberaeron", DepartmentName = "Air Handling" };
+				joe.HasSiteAccess = true;
+				joe.HasRoofAndScaffoldAccess = true;
+				joe.HasDrillsTraining = true;
+				joe.HasNailersTraining = true;
+				badges.Add(joe);
+				
+				var jane = new Badge(){ FirstName = "Jane", LastName = "Doe", CongregationName = "Cardigan", DepartmentName = "Electricians" };
+				jane.HasSiteAccess = true;
+				jane.HasDrillsTraining = true;
+				jane.HasPlanersTraing = true;
+				badges.Add(jane);
+				
+				var phil = new Badge(){ FirstName = "Phil", LastName = "Baines", CongregationName = "Aberaeron", DepartmentName = "IT Department" };
+				phil.HasSiteAccess = true;
+				phil.HasRoofAndScaffoldAccess = true;
+				phil.HasDrillsTraining = true;
+				phil.HasJigsawsTraining = true;
+				badges.Add(phil);
+				
+				var madelyn = new Badge(){ FirstName = "Madelyn", LastName = "Baines", CongregationName = "Aberaeron", DepartmentName = "Volunteers" };
+				madelyn.HasSiteAccess = true;
+				madelyn.HasRoofAndScaffoldAccess = true;
+				madelyn.HasDrillsTraining = true;
+				madelyn.HasJigsawsTraining = true;
+				badges.Add(madelyn);
 			}
 			
 			try

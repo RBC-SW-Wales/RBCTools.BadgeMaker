@@ -142,22 +142,22 @@ namespace RbcTools.Library.Badges
 			this.DrawString("Access", access, this.fontItalic);
 			
 			y += this.rowHeight;
-			this.DrawCheckItem(contentRect.X, y, true, "Training 1");
-			this.DrawCheckItem(col2X, y, false, "Training 2");
-			this.DrawCheckItem(col3X, y, false, "Roof/Scaffold");
+			this.DrawCheckItem(contentRect.X, y, badge.HasDrillsTraining, "Drills");
+			this.DrawCheckItem(col2X, y, badge.HasJigsawsTraining, "Jigsaws");
+			this.DrawCheckItem(col3X, y, badge.HasRoofAndScaffoldAccess, "Roof/Scaffold");
 			
 			y += this.rowHeight;
-			this.DrawCheckItem(contentRect.X, y, false, "Training 3");
-			this.DrawCheckItem(col2X, y, true, "Training 4");
-			this.DrawCheckItem(col3X, y, true, "Site");
+			this.DrawCheckItem(contentRect.X, y, badge.HasPlanersTraing, "Planers");
+			this.DrawCheckItem(col2X, y, badge.HasNailersTraining, "Nailers");
+			this.DrawCheckItem(col3X, y, badge.HasSiteAccess, "Site");
 			
 			y += this.rowHeight;
-			this.DrawCheckItem(contentRect.X, y, true, "Training 4");
-			this.DrawCheckItem(col2X, y, false, "Training 5");
+			this.DrawCheckItem(contentRect.X, y, badge.HasRoutersTraining, "Routers");
+			this.DrawCheckItem(col2X, y, badge.HasChopSawsTraining, "Chop saws");
 			
 			y += this.rowHeight;
-			this.DrawCheckItem(contentRect.X, y, false, "Training 7");
-			this.DrawCheckItem(col2X, y, true, "Training 8");
+			this.DrawCheckItem(contentRect.X, y, badge.HasCitbPlantTraining, "CITB plant");
+			this.DrawCheckItem(col2X, y, badge.HasCircularSawsTraining, "Circular saws");
 			
 		}
 		
