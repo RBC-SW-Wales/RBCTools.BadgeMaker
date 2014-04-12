@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-//using System.Drawing;
-//using System.IO;
-//using System.Reflection;
+using System.Drawing;
+using System.IO;
+using System.Reflection;
+
 using MigraDoc.DocumentObjectModel;
-using MigraDoc.DocumentObjectModel.Tables;
-using MigraDoc.Rendering;
 using PdfSharp;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
@@ -106,7 +105,7 @@ namespace RbcTools.Library.Badges
 			
 			// Name, Congregation and Department labels
 			var labelWidth = columnWidth * 2;
-			var valueWidth = columnWidth * 5;
+			var valueWidth = columnWidth * 5.5;
 			var valueXPoint = contentRect.X + labelWidth;
 			
 			var nameLabel = new XRect(contentRect.X, contentRect.Y, labelWidth, rowHeight);
@@ -128,11 +127,10 @@ namespace RbcTools.Library.Badges
 			this.graphics.DrawLine(XPens.Gray, deptLabel.BottomLeft, dept.BottomRight);
 			
 			// Logo
-			var logoXPoint = valueXPoint + valueWidth + columnWidth;
-			var imageRect = new XRect(logoXPoint, contentRect.Y, columnWidth * 4, rowHeight * 3);
-			this.graphics.DrawRectangle(XBrushes.Gray, imageRect);
-			// TODO Replace with RBC logo
-			//this.graphics.DrawImage(GetImageFromResource("badge-logo"), imageRect);
+			var logoXPoint = valueXPoint + (columnWidth * 6);
+			var imageRect = new XRect(logoXPoint, contentRect.Y + Unit.FromPoint(1), columnWidth * 4, rowHeight * 3);
+			var badgeLogo = GetXImageFromResource("badge-logo");
+			this.graphics.DrawImage(badgeLogo, imageRect);
 			
 			// Training
 			var y = dept.Bottom;
@@ -213,17 +211,21 @@ namespace RbcTools.Library.Badges
 		
 		#endregion
 		
-//		private static XImage GetImageFromResource(string imageName)
-//		{
-//			Bitmap bitmap = null;
-//			Assembly assem = Assembly.GetExecutingAssembly();
-//			var resourceName = "RbcTools.Library.Badges.Resources." + imageName + ".jpg";
-//			using(Stream stream = assem.GetManifestResourceStream(resourceName))
-//			{
-//				bitmap = new Bitmap(stream);
-//			}
-//			return XImage.FromGdiPlusImage(bitmap);
-//		}
+		private static XImage GetXImageFromResource(string imageName)
+		{
+			var bitmap = GetBitmapFromResource(imageName);
+			return XImage.FromGdiPlusImage(bitmap);
+		}
+		
+		private static Bitmap GetBitmapFromResource(string imageName)
+		{
+			Bitmap bitmap = null;
+			Assembly assem = Assembly.GetExecutingAssembly();
+			var resourceName = "RbcTools.Library.Badges.Resources." + imageName + ".jpg";
+			Stream stream = assem.GetManifestResourceStream(resourceName);
+			bitmap = new Bitmap(stream);
+			return bitmap;
+		}
 		
 		private string CreateFileOnSystem()
 		{
