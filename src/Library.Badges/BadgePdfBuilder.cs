@@ -26,11 +26,16 @@ namespace RbcTools.Library.Badges
 			this.badgeWidth = Unit.FromInch(3.3);
 			this.badgeHeight = Unit.FromInch(2.1);
 			
-			// Each badge area is split into 8 even rows and 13 even columns.
-			this.rowHeight = this.badgeHeight / 8;
+			// Each badge area is split into 9 even rows and 13 even columns.
+			this.rowHeight = this.badgeHeight / 9;
 			this.columnWidth = this.badgeWidth / 13;
 			
 			this.fontNormal = new XFont("Verdana", 7, XFontStyle.Regular);
+			this.fontItalic = new XFont("Verdana", 7, XFontStyle.Italic);
+			
+			this.centerLeft = new XStringFormat();
+			this.centerLeft.LineAlignment = XLineAlignment.Center;
+			this.centerLeft.Alignment = XStringAlignment.Near;
 		}
 		
 		#endregion
@@ -52,21 +57,13 @@ namespace RbcTools.Library.Badges
 		private float columnWidth;
 		
 		private XFont fontNormal;
+		private XFont fontItalic;
+		
+		private XStringFormat centerLeft;
 		
 		#endregion
 		
 		#region Properties
-		
-		private XStringFormat CenterLeft
-		{
-			get
-			{
-				XStringFormat centerLeft = new XStringFormat();
-				centerLeft.LineAlignment = XLineAlignment.Center;
-				centerLeft.Alignment = XStringAlignment.Near;
-				return centerLeft;
-			}
-		}
 		
 		#endregion
 		
@@ -109,21 +106,21 @@ namespace RbcTools.Library.Badges
 			var valueXPoint = contentRect.X + labelWidth;
 			
 			var nameLabel = new XRect(contentRect.X, contentRect.Y, labelWidth, rowHeight);
-			this.graphics.DrawString("Name", this.fontNormal, XBrushes.Black, nameLabel, this.CenterLeft);
+			this.graphics.DrawString("Name", this.fontItalic, XBrushes.Black, nameLabel, this.centerLeft);
 			var name = new XRect(valueXPoint, contentRect.Y, valueWidth, rowHeight);
-			this.graphics.DrawString(badge.FullName, this.fontNormal, XBrushes.Black, name, this.CenterLeft);
+			this.graphics.DrawString(badge.FullName, this.fontNormal, XBrushes.Black, name, this.centerLeft);
 			this.graphics.DrawLine(XPens.Gray, nameLabel.BottomLeft, name.BottomRight);
 			
 			var congLabel = new XRect(contentRect.X, nameLabel.Bottom, labelWidth, rowHeight);
-			this.graphics.DrawString("Cong.", this.fontNormal, XBrushes.Black, congLabel, this.CenterLeft);
+			this.graphics.DrawString("Cong.", this.fontItalic, XBrushes.Black, congLabel, this.centerLeft);
 			var cong = new XRect(valueXPoint, name.Bottom, valueWidth, rowHeight);
-			this.graphics.DrawString(badge.CongregationName, this.fontNormal, XBrushes.Black, cong, this.CenterLeft);
+			this.graphics.DrawString(badge.CongregationName, this.fontNormal, XBrushes.Black, cong, this.centerLeft);
 			this.graphics.DrawLine(XPens.Gray, congLabel.BottomLeft, cong.BottomRight);
 			
 			var deptLabel = new XRect(contentRect.X, congLabel.Bottom, labelWidth, rowHeight);
-			this.graphics.DrawString("Dept.", this.fontNormal, XBrushes.Black, deptLabel, this.CenterLeft);
+			this.graphics.DrawString("Dept.", this.fontItalic, XBrushes.Black, deptLabel, this.centerLeft);
 			var dept = new XRect(valueXPoint, cong.Bottom, valueWidth, rowHeight);
-			this.graphics.DrawString(badge.DepartmentName, this.fontNormal, XBrushes.Black, dept, this.CenterLeft);
+			this.graphics.DrawString(badge.DepartmentName, this.fontNormal, XBrushes.Black, dept, this.centerLeft);
 			this.graphics.DrawLine(XPens.Gray, deptLabel.BottomLeft, dept.BottomRight);
 			
 			// Logo
@@ -136,22 +133,27 @@ namespace RbcTools.Library.Badges
 			var y = dept.Bottom;
 			var col2X = contentRect.X + (columnWidth * 4);
 			var col3X = contentRect.X + (columnWidth * 8);
+			var halfRow = rowHeight / 2;
 			
+			var training = new XRect(contentRect.X, y + halfRow, columnWidth * 4, halfRow);
+			this.DrawString("TRAINING", training, this.fontItalic);
+			
+			var access = new XRect(col3X, y + halfRow, columnWidth * 4, halfRow);
+			this.DrawString("ACCESS", access, this.fontItalic);
+			
+			y += this.rowHeight;
 			this.DrawCheckItem(contentRect.X, y, true, "Training 1");
 			this.DrawCheckItem(col2X, y, false, "Training 2");
-			
-			var access = new XRect(col3X, y, columnWidth * 4, rowHeight);
-			this.DrawString("ACCESS", access, this.fontNormal);
+			this.DrawCheckItem(col3X, y, false, "Roof/Scaffold");
 			
 			y += this.rowHeight;
 			this.DrawCheckItem(contentRect.X, y, false, "Training 3");
 			this.DrawCheckItem(col2X, y, true, "Training 4");
-			this.DrawCheckItem(col3X, y, false, "Roof/Scaffold");
+			this.DrawCheckItem(col3X, y, true, "Site");
 			
 			y += this.rowHeight;
 			this.DrawCheckItem(contentRect.X, y, true, "Training 4");
 			this.DrawCheckItem(col2X, y, false, "Training 5");
-			this.DrawCheckItem(col3X, y, true, "Site");
 			
 			y += this.rowHeight;
 			this.DrawCheckItem(contentRect.X, y, false, "Training 7");
@@ -206,7 +208,7 @@ namespace RbcTools.Library.Badges
 			if(font == null)
 				font = this.fontNormal;
 			
-			this.graphics.DrawString(text, font, XBrushes.Black, rect, this.CenterLeft);
+			this.graphics.DrawString(text, font, XBrushes.Black, rect, this.centerLeft);
 		}
 		
 		#endregion
