@@ -136,10 +136,10 @@ namespace RbcTools.Library.Badges
 			var halfRow = rowHeight / 2;
 			
 			var training = new XRect(contentRect.X, y + halfRow, columnWidth * 4, halfRow);
-			this.DrawString("TRAINING", training, this.fontItalic);
+			this.DrawString("Training", training, this.fontItalic);
 			
 			var access = new XRect(col3X, y + halfRow, columnWidth * 4, halfRow);
-			this.DrawString("ACCESS", access, this.fontItalic);
+			this.DrawString("Access", access, this.fontItalic);
 			
 			y += this.rowHeight;
 			this.DrawCheckItem(contentRect.X, y, true, "Training 1");
