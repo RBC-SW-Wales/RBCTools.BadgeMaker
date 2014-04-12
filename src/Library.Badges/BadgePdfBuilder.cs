@@ -94,7 +94,7 @@ namespace RbcTools.Library.Badges
 			
 			// Top row (full width)
 			var topRow = new XRect(rectBadge.X, rectBadge.Y, rectBadge.Width, rowHeight);
-			this.graphics.DrawRectangle(XBrushes.DarkBlue, topRow);
+			this.graphics.DrawRectangle(XBrushes.DarkGreen, topRow);
 			this.graphics.DrawString("Jehovah's Witnesses Regional Building Team".ToUpper(), this.fontNormal, XBrushes.White, topRow, XStringFormats.Center);
 			
 			// Define a 'content' rectangle that has half a column either side (leaving 12 columns to use).
