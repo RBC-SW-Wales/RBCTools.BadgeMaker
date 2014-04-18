@@ -134,22 +134,26 @@ namespace RbcTools.Library.Badges
 			this.graphics.DrawString(badge.DepartmentName, this.fontNormal, XBrushes.Black, dept, this.centerLeft);
 			this.graphics.DrawLine(XPens.Gray, deptLabel.BottomLeft, dept.BottomRight);
 			
-			// Logo
+			// Logo Area
 			var logoXPoint = valueXPoint + (columnWidth * 6);
 			
 			if(this.UseLocalVolunteerDesign)
 			{
-				var localRect1 = new XRect(logoXPoint, contentRect.Y + Unit.FromPoint(1), columnWidth * 4, rowHeight * 1.5);
-				var localRect2 = new XRect(logoXPoint, contentRect.Y + localRect1.Height, columnWidth * 4, rowHeight * 1.5);
+				// If the "Local Volunteer" flag is true, show that text
+				var localRect1 = new XRect(logoXPoint, contentRect.Y + rowHeight / 2, columnWidth * 4, rowHeight * 1);
+				var localRect2 = new XRect(logoXPoint, localRect1.Bottom, columnWidth * 4, rowHeight * 1);
 				this.graphics.DrawString("Local", this.fontLocal, XBrushes.DarkOrange, localRect1, XStringFormats.Center);
 				this.graphics.DrawString("Volunteer", this.fontLocal, XBrushes.DarkOrange, localRect2, XStringFormats.Center);
 			}
 			else
 			{
-				var imageRect = new XRect(logoXPoint, contentRect.Y + Unit.FromPoint(1), columnWidth * 4, rowHeight * 3);
-				this.graphics.DrawString("RBC", this.fontLogo, XBrushes.DarkGreen, imageRect, XStringFormats.Center);
-				//var badgeLogo = GetXImageFromResource("badge-logo");
-				//this.graphics.DrawImage(badgeLogo, imageRect);
+				// Otherwise (not local volunteer badge), show the RBC text
+				var logoRect1 = new XRect(logoXPoint, contentRect.Y + Unit.FromPoint(1), columnWidth * 4, rowHeight * 2);
+				var logoRect2 = new XRect(logoXPoint, logoRect1.Bottom, columnWidth * 4, rowHeight / 2);
+				var logoRect3 = new XRect(logoXPoint, logoRect2.Bottom, columnWidth * 4, rowHeight / 2);
+				this.graphics.DrawString("RBC", this.fontLogo, XBrushes.DarkGreen, logoRect1, XStringFormats.Center);
+				this.graphics.DrawString("South Wales and", this.fontNormal, XBrushes.DarkGreen, logoRect2, XStringFormats.Center);
+				this.graphics.DrawString("Gloucestershire", this.fontNormal, XBrushes.DarkGreen, logoRect3, XStringFormats.Center);
 			}
 			
 			// Training
