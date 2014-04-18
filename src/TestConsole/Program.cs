@@ -12,7 +12,8 @@ namespace TestConsole
 		{
 			try
 			{
-				Program.CreatePdf();
+				// Program.CreatePdf();
+				Program.ListDepartments();
 			}
 			catch(Exception ex)
 			{
@@ -73,6 +74,20 @@ namespace TestConsole
 			//builder.UseLocalVolunteerDesign = true;
 			var fileName = builder.CreatePdf();
 			var process = Process.Start(fileName);
+		}
+		
+		public static void ListDepartments()
+		{
+			Console.WriteLine("List Departments");
+			
+			var departments = RbcTools.Library.Database.Departments.GetDepartments();
+			foreach(var department in departments)
+			{
+				Console.WriteLine(string.Format("{0, 4} : {1}", department.ID, department.Name));
+			}
+			
+			Console.Write("Press any key to close . . . ");
+			Console.ReadKey(true);
 		}
 	}
 }

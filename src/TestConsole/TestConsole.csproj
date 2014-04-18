@@ -64,6 +64,10 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\externals\RbcTools.Library\src\Library\RbcTools.Library.csproj">
+      <Project>{B756777A-A247-47B2-B2ED-8A9121EC787D}</Project>
+      <Name>RbcTools.Library</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Library.Badges\RbcTools.Library.Badges.csproj">
       <Project>{24A62C1E-BF7F-469F-A229-94A1178D2A66}</Project>
       <Name>RbcTools.Library.Badges</Name>

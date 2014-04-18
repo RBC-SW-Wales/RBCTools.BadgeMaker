@@ -1,0 +1,3 @@
+[submodule "src/externals/RbcTools.Library"]
+	path = src/externals/RbcTools.Library
+	url = git@github.com:RBC-SW-Wales/RBCTools.Library.git
