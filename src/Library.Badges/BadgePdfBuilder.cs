@@ -30,8 +30,13 @@ namespace RbcTools.Library.Badges
 			this.rowHeight = this.badgeHeight / 9;
 			this.columnWidth = this.badgeWidth / 13;
 			
-			this.fontNormal = new XFont("Verdana", 7, XFontStyle.Regular);
-			this.fontItalic = new XFont("Verdana", 7, XFontStyle.Italic);
+			var fontOptions = new XPdfFontOptions(PdfFontEmbedding.Always);
+			
+			this.fontNormal = new XFont("Verdana", 7, XFontStyle.Regular, fontOptions);
+			this.fontItalic = new XFont("Verdana", 7, XFontStyle.Italic, fontOptions);
+			this.fontWingdings = new XFont("Wingdings 2", 9, XFontStyle.Bold, fontOptions);
+			this.fontLogo = new XFont("Times New Roman", 30, XFontStyle.Regular, fontOptions);
+			this.fontLocal = new XFont("Times New Roman", 15, XFontStyle.Regular, fontOptions);
 			
 			this.centerLeft = new XStringFormat();
 			this.centerLeft.LineAlignment = XLineAlignment.Center;
@@ -58,12 +63,17 @@ namespace RbcTools.Library.Badges
 		
 		private XFont fontNormal;
 		private XFont fontItalic;
+		private XFont fontWingdings;
+		private XFont fontLogo;
+		private XFont fontLocal;
 		
 		private XStringFormat centerLeft;
 		
 		#endregion
 		
 		#region Properties
+		
+		public bool UseLocalVolunteerDesign { get; set; }
 		
 		#endregion
 		
@@ -92,9 +102,10 @@ namespace RbcTools.Library.Badges
 			XRect rectBadge = this.allRects[this.allBadges.IndexOf(badge)];
 			this.graphics.DrawRectangle(XPens.LightGray, rectBadge);
 			
-			// Top row (full width)
+			// Create the top row (coloured differently for local volunteers)
 			var topRow = new XRect(rectBadge.X, rectBadge.Y, rectBadge.Width, rowHeight);
-			this.graphics.DrawRectangle(XBrushes.DarkGreen, topRow);
+			XBrush topRowBrush = this.UseLocalVolunteerDesign ? XBrushes.DarkOrange : XBrushes.DarkGreen;
+			this.graphics.DrawRectangle(topRowBrush, topRow);
 			this.graphics.DrawString("Jehovah's Witnesses Regional Building Team".ToUpper(), this.fontNormal, XBrushes.White, topRow, XStringFormats.Center);
 			
 			// Define a 'content' rectangle that has half a column either side (leaving 12 columns to use).
@@ -125,9 +136,21 @@ namespace RbcTools.Library.Badges
 			
 			// Logo
 			var logoXPoint = valueXPoint + (columnWidth * 6);
-			var imageRect = new XRect(logoXPoint, contentRect.Y + Unit.FromPoint(1), columnWidth * 4, rowHeight * 3);
-			var badgeLogo = GetXImageFromResource("badge-logo");
-			this.graphics.DrawImage(badgeLogo, imageRect);
+			
+			if(this.UseLocalVolunteerDesign)
+			{
+				var localRect1 = new XRect(logoXPoint, contentRect.Y + Unit.FromPoint(1), columnWidth * 4, rowHeight * 1.5);
+				var localRect2 = new XRect(logoXPoint, contentRect.Y + localRect1.Height, columnWidth * 4, rowHeight * 1.5);
+				this.graphics.DrawString("Local", this.fontLocal, XBrushes.DarkOrange, localRect1, XStringFormats.Center);
+				this.graphics.DrawString("Volunteer", this.fontLocal, XBrushes.DarkOrange, localRect2, XStringFormats.Center);
+			}
+			else
+			{
+				var imageRect = new XRect(logoXPoint, contentRect.Y + Unit.FromPoint(1), columnWidth * 4, rowHeight * 3);
+				this.graphics.DrawString("RBC", this.fontLogo, XBrushes.DarkGreen, imageRect, XStringFormats.Center);
+				//var badgeLogo = GetXImageFromResource("badge-logo");
+				//this.graphics.DrawImage(badgeLogo, imageRect);
+			}
 			
 			// Training
 			var y = dept.Bottom;
@@ -197,9 +220,7 @@ namespace RbcTools.Library.Badges
 			var checkRect = new XRect(x, y, checkBoxWidth, rowHeight);
 			var textRect = new XRect(textXPoint, y, columnWidth * 3.5, rowHeight);
 			
-			var fontWingdings = new XFont("Wingdings 2", 9, XFontStyle.Bold);
-			
-			this.DrawString(isChecked ? "R" : "£", checkRect, fontWingdings);
+			this.DrawString(isChecked ? "R" : "£", checkRect, this.fontWingdings);
 			this.DrawString(text, textRect);
 		}
 		

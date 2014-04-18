@@ -53,6 +53,7 @@ namespace TestConsole
 			try
 			{
 				var builder = new BadgePdfBuilder(badges);
+				//builder.UseLocalVolunteerDesign = true;
 				var fileName = builder.CreatePdf();
 				var process = Process.Start(fileName);
 			}
