@@ -10,6 +10,25 @@ namespace TestConsole
 	{
 		public static void Main(string[] args)
 		{
+			try
+			{
+				Program.CreatePdf();
+			}
+			catch(Exception ex)
+			{
+				Console.WriteLine("ERROR");
+				Console.WriteLine("");
+				Console.WriteLine(ex.Message);
+				Console.WriteLine("");
+				Console.WriteLine(ex.StackTrace);
+				Console.WriteLine("");
+				Console.Write("Press any key to close . . . ");
+				Console.ReadKey(true);
+			}
+		}
+		
+		public static void CreatePdf()
+		{
 			Console.WriteLine("Creating a PDF");
 			
 			var badges = new List<Badge>();
@@ -50,24 +69,10 @@ namespace TestConsole
 				badges.Add(madelyn);
 			}
 			
-			try
-			{
-				var builder = new BadgePdfBuilder(badges);
-				//builder.UseLocalVolunteerDesign = true;
-				var fileName = builder.CreatePdf();
-				var process = Process.Start(fileName);
-			}
-			catch(Exception ex)
-			{
-				Console.WriteLine("ERROR");
-				Console.WriteLine("");
-				Console.WriteLine(ex.Message);
-				Console.WriteLine("");
-				Console.WriteLine(ex.StackTrace);
-				Console.WriteLine("");
-				Console.Write("Press any key to close . . . ");
-				Console.ReadKey(true);
-			}
+			var builder = new BadgePdfBuilder(badges);
+			//builder.UseLocalVolunteerDesign = true;
+			var fileName = builder.CreatePdf();
+			var process = Process.Start(fileName);
 		}
 	}
 }
