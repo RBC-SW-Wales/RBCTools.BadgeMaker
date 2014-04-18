@@ -234,21 +234,21 @@ namespace RbcTools.Library.Badges
 		
 		#endregion
 		
-		private static XImage GetXImageFromResource(string imageName)
-		{
-			var bitmap = GetBitmapFromResource(imageName);
-			return XImage.FromGdiPlusImage(bitmap);
-		}
-		
-		private static Bitmap GetBitmapFromResource(string imageName)
-		{
-			Bitmap bitmap = null;
-			Assembly assem = Assembly.GetExecutingAssembly();
-			var resourceName = "RbcTools.Library.Badges.Resources." + imageName + ".jpg";
-			Stream stream = assem.GetManifestResourceStream(resourceName);
-			bitmap = new Bitmap(stream);
-			return bitmap;
-		}
+//		private static XImage GetXImageFromResource(string imageName)
+//		{
+//			var bitmap = GetBitmapFromResource(imageName);
+//			return XImage.FromGdiPlusImage(bitmap);
+//		}
+//		
+//		private static Bitmap GetBitmapFromResource(string imageName)
+//		{
+//			Bitmap bitmap = null;
+//			Assembly assem = Assembly.GetExecutingAssembly();
+//			var resourceName = "RbcTools.Library.Badges.Resources." + imageName + ".jpg";
+//			Stream stream = assem.GetManifestResourceStream(resourceName);
+//			bitmap = new Bitmap(stream);
+//			return bitmap;
+//		}
 		
 		private string CreateFileOnSystem()
 		{
