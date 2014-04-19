@@ -15,7 +15,7 @@ namespace TestConsole
 			try
 			{
 				Program.CreatePdf();
-//				Program.ListDepartments();
+				//Program.ListDepartments();
 			}
 			catch(Exception ex)
 			{
@@ -34,47 +34,17 @@ namespace TestConsole
 		{
 			Console.WriteLine("Creating a PDF");
 			
-			var badges = new List<Badge>();
+			var department = Departments.GetById(13); // IT Department = 13
 			
-			for (int i = 0; i < 4; i++)
-			{
-				var john = new Badge(){ FirstName = "John", LastName = "Doe", CongregationName = "Cardigan", DepartmentName = "Decorating" };
-				john.HasSiteAccess = true;
-				john.HasDrillsTraining = true;
-				john.HasJigsawsTraining = true;
-				badges.Add(john);
-				
-				var joe = new Badge(){ FirstName = "Joe", LastName = "Bloggs", CongregationName = "Aberaeron", DepartmentName = "Air Handling" };
-				joe.HasSiteAccess = true;
-				joe.HasRoofAndScaffoldAccess = true;
-				joe.HasDrillsTraining = true;
-				joe.HasNailersTraining = true;
-				badges.Add(joe);
-				
-				var jane = new Badge(){ FirstName = "Jane", LastName = "Doe", CongregationName = "Cardigan", DepartmentName = "Electricians" };
-				jane.HasSiteAccess = true;
-				jane.HasDrillsTraining = true;
-				jane.HasPlanersTraing = true;
-				badges.Add(jane);
-				
-				var phil = new Badge(){ FirstName = "Phil", LastName = "Baines", CongregationName = "Aberaeron", DepartmentName = "IT Department" };
-				phil.HasSiteAccess = true;
-				phil.HasRoofAndScaffoldAccess = true;
-				phil.HasDrillsTraining = true;
-				phil.HasJigsawsTraining = true;
-				badges.Add(phil);
-				
-				var madelyn = new Badge(){ FirstName = "Madelyn", LastName = "Baines", CongregationName = "Aberaeron", DepartmentName = "Volunteers" };
-				madelyn.HasSiteAccess = true;
-				madelyn.HasRoofAndScaffoldAccess = true;
-				madelyn.HasDrillsTraining = true;
-				madelyn.HasJigsawsTraining = true;
-				badges.Add(madelyn);
-			}
+			// Get ALL badges for a deparment.
+			var badges = Volunteers.GetBadgesByDepartment(department);
 			
+			// Use BadgePdfBuilder to create badges PDF
 			var builder = new BadgePdfBuilder(badges);
-			//builder.UseLocalVolunteerDesign = true;
+			// Create the file and return filename
 			var fileName = builder.CreatePdf();
+			
+			// Open the file.
 			var process = Process.Start(fileName);
 		}
 		
@@ -86,11 +56,6 @@ namespace TestConsole
 			foreach(var department in departments)
 			{
 				Console.WriteLine(string.Format("{0, 4} : {1}", department.ID, department.Name));
-				var volunteers = Volunteers.GetByDepartment(department);
-				foreach(var vol in volunteers)
-				{
-					Console.WriteLine(" ---- " + vol.FirstName);
-				}
 			}
 			
 			Console.Write("Press any key to close . . . ");
