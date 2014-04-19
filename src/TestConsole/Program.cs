@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+
 using RbcTools.Library.Badges;
+using RbcTools.Library.Database;
 
 namespace TestConsole
 {
@@ -84,6 +86,11 @@ namespace TestConsole
 			foreach(var department in departments)
 			{
 				Console.WriteLine(string.Format("{0, 4} : {1}", department.ID, department.Name));
+				var volunteers = Volunteers.GetByDepartment(department);
+				foreach(var vol in volunteers)
+				{
+					Console.WriteLine(" ---- " + vol.FirstName);
+				}
 			}
 			
 			Console.Write("Press any key to close . . . ");
