@@ -14,8 +14,8 @@ namespace TestConsole
 		{
 			try
 			{
-				// Program.CreatePdf();
-				Program.ListDepartments();
+				Program.CreatePdf();
+//				Program.ListDepartments();
 			}
 			catch(Exception ex)
 			{

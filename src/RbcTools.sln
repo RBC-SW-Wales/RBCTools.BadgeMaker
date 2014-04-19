@@ -2,8 +2,6 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 # SharpDevelop 4.4
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RbcTools.Library.Badges", "Library.Badges\RbcTools.Library.Badges.csproj", "{24A62C1E-BF7F-469F-A229-94A1178D2A66}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsole", "TestConsole\TestConsole.csproj", "{71D73EB4-3A70-45F3-B22C-6A7152CBC057}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RbcTools.Library", "externals\RbcTools.Library\src\Library\RbcTools.Library.csproj", "{B756777A-A247-47B2-B2ED-8A9121EC787D}"
@@ -14,10 +12,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{24A62C1E-BF7F-469F-A229-94A1178D2A66}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{24A62C1E-BF7F-469F-A229-94A1178D2A66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{24A62C1E-BF7F-469F-A229-94A1178D2A66}.Release|Any CPU.Build.0 = Release|Any CPU
-		{24A62C1E-BF7F-469F-A229-94A1178D2A66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71D73EB4-3A70-45F3-B22C-6A7152CBC057}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71D73EB4-3A70-45F3-B22C-6A7152CBC057}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{71D73EB4-3A70-45F3-B22C-6A7152CBC057}.Release|Any CPU.Build.0 = Release|Any CPU
